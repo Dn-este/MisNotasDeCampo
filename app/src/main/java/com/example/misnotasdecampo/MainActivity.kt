@@ -1,14 +1,11 @@
 package com.example.misnotasdecampo
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
@@ -20,36 +17,37 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val btnNew = findViewById<Button>(R.id.btnNuevaNota)
-        contenedorNotas = findViewById(R.id.contenedorNotas) // Buscamos el contenedor
+        contenedorNotas = findViewById(R.id.contenedorNotas)
 
-        // 1. Preparamos el receptor de resultados (Para cuando volvamos de crear nota)
-        val resultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val data = result.data
-                    val titulo = data?.getStringExtra("titulo") ?: ""
-                    val descripcion = data?.getStringExtra("descripcion") ?: ""
-                    val fotoArchivo = data?.getStringExtra("nombre_archivo_foto")
+        // 1. Cargar las notas del disco apenas arranca la app
+        AlmacenNotas.cargarNotas(this)
 
-                    if (titulo.isNotEmpty()) {
-                        // Pasamos TODOS los datos a la función de crear la vista
-                        agregarNotaVisualmente(titulo, descripcion, fotoArchivo)
-                    }
-                }
-            }
-
-        // 2. Botón Nueva Nota
         btnNew.setOnClickListener {
             val intent = Intent(this, CreateNoteActivity::class.java)
-            // Usamos launch en lugar de startActivity simple
-            resultLauncher.launch(intent)
+            startActivity(intent)
         }
     }
 
-    // Función auxiliar para crear un TextView con código
-    private fun agregarNotaVisualmente(titulo: String, descripcion: String, fotoArchivo: String?) {
+    // "onResume" se ejecuta siempre que la pantalla se vuelve visible
+    // (Al abrir la app Y al volver de crear una nota)
+    override fun onResume() {
+        super.onResume()
+        refrescarListaCompleta()
+    }
+
+    private fun refrescarListaCompleta() {
+        // 1. Borramos todo lo que haya en pantalla para no duplicar
+        contenedorNotas.removeAllViews()
+
+        // 2. Recorremos la lista del Almacén y dibujamos cada nota
+        for (nota in AlmacenNotas.listaNotas) {
+            agregarNotaVisualmente(nota)
+        }
+    }
+
+    private fun agregarNotaVisualmente(nota: Nota) {
         val textoView = TextView(this)
-        textoView.text = "• $titulo"
+        textoView.text = "• ${nota.titulo}"
         textoView.textSize = 18f
         textoView.setPadding(40, 40, 40, 40)
         textoView.setBackgroundColor(Color.parseColor("#F0F0F0"))
@@ -61,22 +59,27 @@ class MainActivity : AppCompatActivity() {
         params.setMargins(0, 0, 0, 20)
         textoView.layoutParams = params
 
-        // --- NUEVO COMPORTAMIENTO DE CLIC ---
+        // Clic corto: Ver detalle
         textoView.setOnClickListener {
-            // Al hacer clic, abrimos el DETALLE enviando los datos
             val intent = Intent(this, DetailActivity::class.java)
-            intent.putExtra("titulo_detalle", titulo)
-            intent.putExtra("desc_detalle", descripcion)
-            intent.putExtra("foto_detalle", fotoArchivo)
+            // Pasamos los datos necesarios
+            intent.putExtra("titulo_detalle", nota.titulo)
+            intent.putExtra("desc_detalle", nota.descripcion)
+            intent.putExtra("foto_detalle", nota.rutaImagen)
             startActivity(intent)
         }
 
-        // Mantenemos el clic largo para borrar
+        // Clic largo: Eliminar
         textoView.setOnLongClickListener {
             val builder = android.app.AlertDialog.Builder(this)
             builder.setTitle("¿Eliminar nota?")
             builder.setPositiveButton("Eliminar") { dialog, _ ->
-                contenedorNotas.removeView(textoView)
+
+                // --- LÓGICA DE BORRADO ---
+                AlmacenNotas.listaNotas.remove(nota) // Borrar de memoria
+                AlmacenNotas.guardarNotas(this)      // Actualizar el archivo en disco
+                refrescarListaCompleta()             // Redibujar la pantalla
+
                 dialog.dismiss()
             }
             builder.setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }

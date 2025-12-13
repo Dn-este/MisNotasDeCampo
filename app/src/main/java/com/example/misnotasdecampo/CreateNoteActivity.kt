@@ -70,13 +70,8 @@ class CreateNoteActivity : AppCompatActivity() {
                 AlmacenNotas.listaNotas.add(nuevaNota)
                 // -------------------------------------------
                 AlmacenNotas.guardarNotas(this)
-                // 2. Devolver datos al Home (Esto lo dejamos igual para que tu Home siga funcionando)
-                val data = Intent()
-                data.putExtra("titulo", titulo)
-                data.putExtra("descripcion", descripcion)
-                data.putExtra("nombre_archivo_foto", nombreArchivo)
 
-                setResult(RESULT_OK, data)
+                setResult(RESULT_OK)
                 finish()
             } else {
                 edtTitulo.error = "Falta el título"
