@@ -63,13 +63,6 @@ Los archivos principales del código fuente se encuentran en `com.example.misnot
 
 > **Nota:** La aplicación solicitará permisos de **Cámara** la primera vez que intentes tomar una foto.
 
-## 📸 Capturas de Pantalla (Preview)
-
-*(Aquí puedes subir capturas reales de tu app funcionando)*
-
-| Lista de Notas | Creación de Nota | Detalle |
-|:---:|:---:|:---:|
-| *(Imagen de Main)* | *(Imagen de Create)* | *(Imagen de Detail)* |
 
 ## Contribución
 
