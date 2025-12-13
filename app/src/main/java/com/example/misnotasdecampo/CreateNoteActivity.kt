@@ -59,15 +59,22 @@ class CreateNoteActivity : AppCompatActivity() {
             val descripcion = edtDescripcion.text.toString()
 
             if (titulo.isNotEmpty()) {
+                // 1. Guardar la imagen si existe
+                var nombreArchivo: String? = null
+                if (fotoCapturada != null) {
+                    nombreArchivo = guardarImagenEnDispositivo(fotoCapturada!!)
+                }
+
+                // --- NUEVO: Guardar en el Almacén Global ---
+                val nuevaNota = Nota(titulo, descripcion, nombreArchivo)
+                AlmacenNotas.listaNotas.add(nuevaNota)
+                // -------------------------------------------
+
+                // 2. Devolver datos al Home (Esto lo dejamos igual para que tu Home siga funcionando)
                 val data = Intent()
                 data.putExtra("titulo", titulo)
                 data.putExtra("descripcion", descripcion)
-
-                // Si hay foto, la guardamos en un archivo local
-                if (fotoCapturada != null) {
-                    val nombreArchivo = guardarImagenEnDispositivo(fotoCapturada!!)
-                    data.putExtra("nombre_archivo_foto", nombreArchivo)
-                }
+                data.putExtra("nombre_archivo_foto", nombreArchivo)
 
                 setResult(RESULT_OK, data)
                 finish()
