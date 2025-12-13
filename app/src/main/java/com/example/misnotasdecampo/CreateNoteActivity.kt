@@ -69,7 +69,7 @@ class CreateNoteActivity : AppCompatActivity() {
                 val nuevaNota = Nota(titulo, descripcion, nombreArchivo)
                 AlmacenNotas.listaNotas.add(nuevaNota)
                 // -------------------------------------------
-
+                AlmacenNotas.guardarNotas(this)
                 // 2. Devolver datos al Home (Esto lo dejamos igual para que tu Home siga funcionando)
                 val data = Intent()
                 data.putExtra("titulo", titulo)
