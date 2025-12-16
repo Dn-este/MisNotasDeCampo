@@ -21,6 +21,9 @@ class CreateNoteActivity : AppCompatActivity() {
     private lateinit var edtTitulo: EditText
     private lateinit var edtDescripcion: EditText // Nuevo
 
+    private lateinit var btnVolver: Button
+
+
     private var fotoCapturada: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +36,15 @@ class CreateNoteActivity : AppCompatActivity() {
         btnGuardar = findViewById(R.id.btnGuardar)
         edtTitulo = findViewById(R.id.edtTitulo)
         edtDescripcion = findViewById(R.id.edtDescripcion) // Nuevo
+        btnVolver = findViewById(R.id.btnVolver)
+
+
+        btnVolver.setOnClickListener {
+            val intento = Intent(this, MainActivity::class.java)
+            startActivity(intento)
+            finish()
+        }
+
 
         // Lógica de cámara (Igual que antes)
         val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->

@@ -1,10 +1,13 @@
 package com.example.misnotasdecampo
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
@@ -16,6 +19,10 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var tvDesc: TextView
     private lateinit var imgFoto: ImageView
     private lateinit var spinner: Spinner
+    private lateinit var btnVolver: Button
+    private lateinit var btnEliminar: Button
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +33,9 @@ class DetailActivity : AppCompatActivity() {
         tvDesc = findViewById(R.id.txtDetalleDescripcion)
         imgFoto = findViewById(R.id.imgDetalleFoto)
         spinner = findViewById(R.id.spinnerNotas)
+        btnVolver = findViewById(R.id.btnVolver)
+        btnEliminar = findViewById(R.id.btnEliminar)
+
 
         // 2. Preparar los datos para el Spinner
         // Obtenemos solo los títulos de nuestra lista global
@@ -56,7 +66,45 @@ class DetailActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-    }
+
+        // Volver a la pantalla principal
+        btnVolver.setOnClickListener {
+            val intento = Intent(this, MainActivity::class.java)
+            startActivity(intento)
+            finish()
+        }
+
+            btnEliminar.setOnClickListener {
+                mostrarDialogoConfirmacion()
+            }
+        }
+
+        private fun mostrarDialogoConfirmacion() {
+            val posicionActual = spinner.selectedItemPosition
+
+            // Verificamos que la posición sea válida
+            if (posicionActual != AdapterView.INVALID_POSITION) {
+                AlertDialog.Builder(this)
+                    .setTitle("¿Eliminar nota?")
+                    .setMessage("Esta acción no se puede deshacer.")
+                    .setPositiveButton("Eliminar") { _, _ ->
+                        eliminarNota(posicionActual)
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+            }
+        }
+
+        private fun eliminarNota(posicion: Int) {
+            // A. Borrar de la lista en memoria
+            AlmacenNotas.listaNotas.removeAt(posicion)
+
+            // B. Actualizar el archivo en el disco para que sea permanente
+            AlmacenNotas.guardarNotas(this)
+
+            // C. Cerrar esta pantalla y volver al Main
+            finish()
+        }
 
     private fun actualizarPantalla(nota: Nota) {
         tvTitulo.text = nota.titulo

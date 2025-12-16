@@ -8,6 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:text="Navegar entre notas:"
         android:textColor="#666666"
         android:textSize="12sp"/>
@@ -49,5 +50,29 @@
         android:layout_height="wrap_content"
         android:text="Descripción..."
         android:textSize="16sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="50dp"
+        android:gravity="bottom">
+
+        <Button
+            android:id="@+id/btnEliminar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ELIMINAR"
+            android:backgroundTint="#D32F2F"
+            android:layout_marginEnd="155dp"/>
+
+        <Button
+            android:id="@+id/btnVolver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#4CAF50"
+            android:text="VOLVER" />
+
+    </LinearLayout>
 
 </LinearLayout>
