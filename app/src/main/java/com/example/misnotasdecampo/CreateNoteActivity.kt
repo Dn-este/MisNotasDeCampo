@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -19,8 +21,8 @@ class CreateNoteActivity : AppCompatActivity() {
     private lateinit var btnFoto: Button
     private lateinit var btnGuardar: Button
     private lateinit var edtTitulo: EditText
-    private lateinit var edtDescripcion: EditText // Nuevo
-
+    private lateinit var edtDescripcion: EditText
+    private lateinit var rgCategorias: RadioGroup
     private lateinit var btnVolver: Button
 
 
@@ -31,12 +33,16 @@ class CreateNoteActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_note)
 
         // Enlazamos las vistas
+        
         imgPreview = findViewById(R.id.imgPreview)
         btnFoto = findViewById(R.id.btnTomarFoto)
         btnGuardar = findViewById(R.id.btnGuardar)
         edtTitulo = findViewById(R.id.edtTitulo)
-        edtDescripcion = findViewById(R.id.edtDescripcion) // Nuevo
+        edtDescripcion = findViewById(R.id.edtDescripcion) 
+        rgCategorias = findViewById(R.id.rgCategorias)
         btnVolver = findViewById(R.id.btnVolver)
+
+        // Lógica del botón Volver
 
 
         btnVolver.setOnClickListener {
@@ -70,7 +76,9 @@ class CreateNoteActivity : AppCompatActivity() {
             val titulo = edtTitulo.text.toString()
             val descripcion = edtDescripcion.text.toString()
 
-            if (titulo.isNotEmpty()) {
+            val selectedCategoriaId = rgCategorias.checkedRadioButtonId
+            if (titulo.isNotEmpty() && selectedCategoriaId != -1) {
+                val categoriaSeleccionada = findViewById<RadioButton>(selectedCategoriaId).text.toString()
                 // 1. Guardar la imagen si existe
                 var nombreArchivo: String? = null
                 if (fotoCapturada != null) {
@@ -78,7 +86,7 @@ class CreateNoteActivity : AppCompatActivity() {
                 }
 
                 // --- NUEVO: Guardar en el Almacén Global ---
-                val nuevaNota = Nota(titulo, descripcion, nombreArchivo)
+                val nuevaNota = Nota(id = System.currentTimeMillis(), titulo, descripcion, nombreArchivo, categoriaSeleccionada)
                 AlmacenNotas.listaNotas.add(nuevaNota)
                 // -------------------------------------------
                 AlmacenNotas.guardarNotas(this)
@@ -86,7 +94,11 @@ class CreateNoteActivity : AppCompatActivity() {
                 setResult(RESULT_OK)
                 finish()
             } else {
-                edtTitulo.error = "Falta el título"
+                if(titulo.isEmpty()){
+                    edtTitulo.error = "Falta el título"
+                } else {
+                    Toast.makeText(this, "Debes seleccionar una categoría", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

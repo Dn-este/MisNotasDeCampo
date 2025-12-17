@@ -7,9 +7,11 @@ import java.io.Serializable
 
 // 1. Agregamos ": Serializable" para que Android sepa convertir esto a archivo
 data class Nota(
+    val id: Long = System.currentTimeMillis(),
     val titulo: String,
     val descripcion: String,
-    val rutaImagen: String?
+    val rutaImagen: String?,
+    val categoria: String
 ) : Serializable
 
 object AlmacenNotas {

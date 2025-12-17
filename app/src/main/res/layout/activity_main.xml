@@ -13,15 +13,24 @@
         android:textSize="30sp"
         android:textStyle="bold"
         android:layout_marginBottom="20dp"/>
+
     <Spinner
+        android:id="@+id/category_spinner"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:entries="@array/note_categories" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="280dp"
+        android:layout_height="0dp"
         android:layout_weight="1">
 
+    <!-- Este es el contenedor real donde añadirás las notas -->
+    <LinearLayout
+        android:id="@+id/contenedorNotas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
 
     </ScrollView>
 

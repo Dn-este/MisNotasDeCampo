@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MisNotasDeCampo</string>
+    <string-array name="note_categories">
+        <item>Todas</item>
+        <item>Casa</item>
+        <item>Trabajo</item>
+        <item>Otro</item>
+    </string-array>
 </resources>
